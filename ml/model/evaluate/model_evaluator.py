@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Union, Dict, Any
 
 from ml.model.evaluate.generic_model import GenericModel
-from ml.model.score import ScoreExtender
+from ml.model.evaluate.score import ScoreExtender
 
 
 class ScoreCriteria(Enum):
