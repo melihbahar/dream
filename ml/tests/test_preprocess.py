@@ -19,6 +19,7 @@ def test_invalid_class_column(sample_dataframe):
         splitter = TrainTestSplitter(sample_dataframe, 'nonexistent_column')
     assert str(e.value) == "Target column 'nonexistent_column' does not exist in the DataFrame."
 
+
 def test_split(sample_dataframe):
     splitter = TrainTestSplitter(sample_dataframe, 'class')
     X_train, X_valid, Y_train, Y_valid, X_test = splitter.split(test_size=0.2, seed=42)
