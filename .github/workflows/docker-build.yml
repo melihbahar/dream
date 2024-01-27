@@ -23,11 +23,6 @@ jobs:
         with:
           images: melihbahar90/dream
 
-      - name: Build Docker Image
-        run: |
-          REPOSITORY_NAME=${{ secrets.DOCKER_USERNAME}}/dream
-          docker build -f Dockerfile 
-
       - name: Build and push Docker image
         uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
         with:
