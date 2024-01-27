@@ -1,3 +1,4 @@
+import pickle
 from typing import List, Tuple
 
 import pandas as pd
@@ -6,6 +7,8 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
+
+from ml.common.logger import logger
 
 
 class CategoricalPreprocessor:
@@ -40,12 +43,15 @@ class NumericalPreprocessor:
 
 
 class Preprocessor:
-    def __init__(self, data: pd.DataFrame, class_column: str):
+    def __init__(self, data: pd.DataFrame, class_column: str = None):
         self.data: pd.DataFrame = data
         self.class_column: str = class_column
 
-        if class_column not in data.columns:
-            raise ValueError(f"Class column '{class_column}' does not exist in the DataFrame.")
+        if self.class_column:
+            if class_column not in self.data.columns:
+                raise ValueError(f"Class column '{class_column}' does not exist in the DataFrame.")
+            self.class_col = self.data[class_column]
+            self.data = self.data.drop([class_column], axis=1)
 
     @property
     def cat_features(self) -> List[str]:
@@ -63,13 +69,9 @@ class Preprocessor:
         num_features_df: pd.DataFrame = self.data.select_dtypes(include=['int64', 'float64'])
         return num_features_df.columns.tolist()
 
-    def _filter_class_column(self, features: List[str]) -> List[str]:
-        return [f for f in features if f != self.class_column]
-
-    def preprocess(self) -> pd.DataFrame:
-        # Class column should not be included in the preprocessing
-        cat_features: List[str] = self._filter_class_column(self.cat_features)
-        num_features: List[str] = self._filter_class_column(self.num_features)
+    def get_preprocess_pipeline(self) -> Pipeline:
+        cat_features: List[str] = self.cat_features
+        num_features: List[str] = self.num_features
 
         cat_processor: CategoricalPreprocessor = CategoricalPreprocessor(cat_features)
         num_processor: NumericalPreprocessor = NumericalPreprocessor(num_features)
@@ -82,5 +84,15 @@ class Preprocessor:
 
         preprocess_pipeline: Pipeline = Pipeline(steps=[('column_transformer', column_transformer)]) \
             .set_output(transform="pandas")
+        return preprocess_pipeline
 
-        return preprocess_pipeline.fit_transform(self.data)
+    def save_pipeline(self, pipeline: Pipeline, path: str) -> None:
+        try:
+            pickle.dump(pipeline, open(path, 'wb'))
+            self.log(f"Successfully saved pipeline to {path}")
+        except Exception as e:
+            self.log(f"Error saving pipeline to {path}: {e}")
+
+    @staticmethod
+    def log(msg: str) -> str:
+        return logger.info(f'[PreProcessor] - {msg}')
