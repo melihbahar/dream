@@ -1,2 +1,4 @@
 playground.py
 .idea/*
+*.csv
+*.pickle
