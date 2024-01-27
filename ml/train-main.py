@@ -1,4 +1,5 @@
 import os
+import sys
 
 import pandas as pd
 
@@ -16,9 +17,13 @@ from ml.model.evaluate.score import RMSE, MAE
 from ml.model.preprocess.train_test_splitter import TrainTestSplitter
 from ml.model.evaluate.model_evaluator import ScoreCriteria
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+
 def train():
-    script_dir = os.path.dirname(__file__)
-    target_dir = os.path.abspath(os.path.join(script_dir, '..', 'app', 'api', 'model'))
+    # script_dir = os.path.dirname(__file__)
+    # target_dir = os.path.abspath(os.path.join(script_dir, '..', 'app', 'api', 'model'))
+    target_dir = 'artifacts'
 
     class_column = 'SalePrice'
 

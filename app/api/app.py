@@ -17,7 +17,7 @@ preprocess_pipeline = pickle.load(open('model/preprocess_pipeline.pickle', 'rb')
 @app.route('/predict', methods=['POST'])
 def predict():
     new_data = request.json
-    # new_data = d
+
     try:
         new_data_df: pd.DataFrame = pd.DataFrame(new_data)
     except KeyError:
