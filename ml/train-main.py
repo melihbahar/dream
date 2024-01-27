@@ -1,6 +1,8 @@
 import os
 import sys
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import pandas as pd
 
 from ml.common.logger import logger
@@ -17,13 +19,10 @@ from ml.model.evaluate.score import RMSE, MAE
 from ml.model.preprocess.train_test_splitter import TrainTestSplitter
 from ml.model.evaluate.model_evaluator import ScoreCriteria
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 
 def train():
     # script_dir = os.path.dirname(__file__)
     # target_dir = os.path.abspath(os.path.join(script_dir, '..', 'app', 'api', 'model'))
-    target_dir = 'artifacts'
 
     class_column = 'SalePrice'
 
@@ -31,14 +30,14 @@ def train():
     dataset = data.dataset
     class_col_df = dataset[class_column]
 
-    data.save_feature_columns(f'{target_dir}/feature_columns.pickle')
+    # data.save_feature_columns(f'feature_columns.pickle')
 
     set_preprocessor: Preprocessor = Preprocessor(data=dataset, class_column=class_column)
     preprocess_pipeline: Pipeline = set_preprocessor.get_preprocess_pipeline()
     fit_preprocess_pipeline = preprocess_pipeline.fit(dataset.drop([class_column], axis=1))
 
     set_preprocessor.save_pipeline(fit_preprocess_pipeline,
-                                   f'{target_dir}/preprocess_pipeline.pickle')
+                                   f'preprocess_pipeline.pickle')
 
     processed_df = fit_preprocess_pipeline.transform(dataset)
     processed_df = pd.concat([processed_df, class_col_df], axis=1)
@@ -73,7 +72,7 @@ def train():
 
     best_model = models.get(best_model_name)
     evaluator.save_model(best_model,
-                         f'{target_dir}/final_model.pickle')
+                         f'final_model.pickle')
 
 
 if __name__ == '__main__':

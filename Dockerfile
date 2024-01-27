@@ -21,7 +21,9 @@ FROM python:3.9-slim AS pack-serving
 
 # Copy trained model from the train stage
 WORKDIR /app
-COPY --from=train /app/ml/artifacts /app/api/model/
+
+COPY --from=train /app/ml/final_model.pickle /app/api/model/final_model.pickle
+COPY --from=train /app/ml/preprocess_pipeline.pickle /app/api/model/preprocess_pipeline.pickle
 
 # Copy Flask app
 COPY app/api/app.py app/api/app.py
