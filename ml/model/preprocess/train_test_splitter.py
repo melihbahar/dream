@@ -38,4 +38,4 @@ class TrainTestSplitter:
 
     @staticmethod
     def log(msg: str) -> str:
-        return logger.info(f'[Data] - {msg}')
+        return logger.info(f'[Splitter] - {msg}')
