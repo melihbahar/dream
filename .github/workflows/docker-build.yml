@@ -1,3 +1,6 @@
+# This is not really needed for this project as I'm already pushing to ECR
+# But I'm keeping it here for future reference and use from DockerHub if needed.
+
 name: Train models and Push new Docker image
 
 on:
@@ -9,6 +12,9 @@ on:
     branches:
       - main
       - master
+
+env:
+  DOCKERHUB_REPO_NAME: 'dream'
 
 jobs:
   train-build-and-push:
@@ -29,7 +35,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: melihbahar90/dream
+          images: ${{ secrets.DOCKER_USERNAME }}/{{ env.DOCKERHUB_REPO_NAME }}
 
       - name: Train models and Push new Docker image
         uses: docker/build-push-action@v5
