@@ -82,6 +82,12 @@ NOTE: This is not best practice! I just did it so that I could get the app worki
 In a real world scenario, I would use ECS (Fargate or EC2) or EKS to deploy the app in a more structured and scalable way.
 Obviously, I would also use a load balancer and/or auto-scaling etc. to make it more production grade.
 
+## Proof!
+![Image](images/img_4.png)
+
+Notice that the EC2 machine is running with the instance_id "i-0f2b6b2b2b2b2b2b2" and outputting us the public IP address.
+This way we can do another POST request to the app's predict endpoint and get the prediction!
+
 ## Next Steps
 I will separate it into 2 parts:
 1) If I had more time

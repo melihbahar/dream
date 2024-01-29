@@ -49,14 +49,5 @@ resource "aws_instance" "dream" {
   }
 }
 
-#resource "aws_instance" "dream" {
-#  ami           = var.ami
-#  instance_type = var.instance_type
-#
-#  tags = {
-#    Name = var.instance_name
-#  }
-#}
-
 
 
