@@ -2,61 +2,61 @@ terraform {
   required_providers {
     aws = {
       source = "hashicorp/aws"
-      version = "4.45.0"
+      version = "5.34.0"
     }
   }
 }
 
+
+#resource "null_resource" "null" {
+#  provisioner "local-exec" {
+#    command = "ssh to IP using key-pair that was created.. docker login docker pull
+#    "
+#  }
+#}
+
+
+
 # ECR Repo created manually
 
-resource "aws_ecs_cluster" "ecs_cluster" {
-  name = "dream-cluster"
-}
+#resource "aws_ecs_cluster" "ecs_cluster" {
+#  name = "dream-cluster"
+#}
+#
+#resource "aws_ecs_task_definition" "task_definition" {
+#  family                = "ecs_cluster"
+#  container_definitions = data.template_file.task_definition_template.rendered
+#}
+#
+#resource "aws_ecs_service" "worker" {
+#  name            = "worker"
+#  cluster         = aws_ecs_cluster.ecs_cluster.id
+#  task_definition = aws_ecs_task_definition.task_definition.arn
+#  desired_count   = 2
+#}
 
-resource "aws_security_group" "ecs_sg" {
-    name        = "ecs-sg"
-    vpc_id      = aws_vpc.vpc.id
-
-    ingress {
-        description = "SSH"
-        from_port       = 22
-        to_port         = 22
-        protocol        = "tcp"
-        cidr_blocks     = ["0.0.0.0/0"]
-    }
-
-    ingress {
-        description = "HTTPS"
-        from_port       = 443
-        to_port         = 443
-        protocol        = "tcp"
-        cidr_blocks     = ["0.0.0.0/0"]
-    }
-
-    ingress {
-          description = "HTTP"
-          from_port       = 80
-          to_port         = 80
-          protocol        = "tcp"
-          cidr_blocks     = ["0.0.0.0/0"]
-      }
-
-    egress {
-        from_port       = 0
-        to_port         = 65535
-        protocol        = "tcp"
-        cidr_blocks     = ["0.0.0.0/0"]
-    }
-}
-
-
-
-
+# ec2
 resource "aws_instance" "dream" {
-  ami           = var.ubunutu_ami
+  ami           = var.ami
   instance_type = var.instance_type
+  iam_instance_profile = aws_iam_instance_profile.profile.name
+  key_name = aws_key_pair.default.key_name
+  vpc_security_group_ids = [aws_security_group.sg.id]
+  user_data = file("user_data.sh")
 
   tags = {
     Name = var.instance_name
   }
 }
+
+#resource "aws_instance" "dream" {
+#  ami           = var.ami
+#  instance_type = var.instance_type
+#
+#  tags = {
+#    Name = var.instance_name
+#  }
+#}
+
+
+

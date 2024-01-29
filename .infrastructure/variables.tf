@@ -6,10 +6,10 @@ variable "instance_name" {
 
 # Hardcoded to a specific ami for now
 # could be changed to take the id of the most recent AMI given a for the instance wanted
-variable "ubunutu_ami" {
+variable "ami" {
   description = "ami to use for EC2"
   type        = string
-  default     = "ami-0c7217cdde317cfec"
+  default     = "ami-0a3c3a20c09d6f377"
 }
 
 # No need for a strong machine for this project

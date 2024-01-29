@@ -14,6 +14,12 @@ model = pickle.load(open('model/final_model.pickle', 'rb'))
 preprocess_pipeline = pickle.load(open('model/preprocess_pipeline.pickle', 'rb'))
 
 
+@app.route('/info', methods=['GET'])
+def info():
+    welcome_message: str = 'Welcome to the API!'
+    return welcome_message
+
+
 @app.route('/predict', methods=['POST'])
 def predict():
     new_data = request.json

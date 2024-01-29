@@ -30,6 +30,8 @@ There are basic unittests for the ML module to make sure it's working as expecte
 If in the future, there would be more models, more optimizations or different scoring functions
 etc. then the unittests would make sure that the code is still working as expected.
 
+![Image](images/img_2.png)
+
 ## APP module
 This is the module that contains the Flask app.
 The chosen model is served using Flask and the app is dockerized.
@@ -42,15 +44,43 @@ The request should have a JSON body with the data to be predicted.
 The app is dockerized.
 I used Docker multi-stage to first train all models and then use the best model to serve the app.
 
+Tested locally of course:
+``` shell
+docker build . -t test_app
+docker run -p 5000:5000 test_app
+```
+![Image](images/img_1.png)
+
+```
+curl -d '[{"MSSubClass": 60,
+>     "MSZoning": "RL",
+>     "LotArea": 9627,
+>     "LotConfig": "Inside",
+>     "BldgType": "1Fam",
+>     "OverallCond": 5,
+>     "YearBuilt": 1993,
+>     "YearRemodAdd": 1994,
+>     "Exterior1st": "HdBoard",
+>     "BsmtFinSF2": 0.0,
+>     "TotalBsmtSF": 996.0}]' -H "Content-Type: application/json" -X POST http://0.0.0.0:5000/predict
+```
+
+![Image](images/img_3.png)
+
+
 ## CI/CD
 The CI/CD is done using Github Actions.
 There a few different workflows:
 1) Unit tests - Runs the unittests for the ML module on each push to the repo.
-2) Deploy to ECR - On each change to the main branch, the app is built and pushed to ECR with a new tag.
+2) Deploy to ECR - On each change to the main branch, the app is built and pushed to ECR with a new tag. (after making sure the unittests are passing)
 3) Deploy to Docker Hub - On each change to the main branch, the app is built and pushed to Docker Hub. 
 This is actually not needed but I used to play around with the image etc. and testing.
-4) Deploy EC2 machines on ECS - I used Terraform to deploy EC2 machines on AWS.
+4) Deploy EC2 machines on ECS - I used Terraform to deploy EC2 machines on AWS. (after pushing the image to ECR)
    (The Terraform code of the ECR repo creation is not included in this repo as I already ran it and not required for the CI/CD)
+5) Deploy the app to ECS - I used Terraform to deploy the app to EC2 machine.
+NOTE: This is not best practice! I just did it so that I could get the app working on an EC2 machine and test it.
+In a real world scenario, I would use ECS (Fargate or EC2) or EKS to deploy the app in a more structured and scalable way.
+Obviously, I would also use a load balancer and/or auto-scaling etc. to make it more production grade.
 
 ## Next Steps
 I will separate it into 2 parts:
@@ -96,11 +126,8 @@ bugs in the ML code.
   - A workflow orchestrator could be used to manage the pipeline.
   - This way we could also track different versions of different parts.
 
-## How to run
-
 ## Notes
 - Ansible could also be used to deploy the app to the EC2 machines. 
 I started working on it but didn't have enough time to finish it as I'm not very familiar with Ansible.
 I took a few hours to learn it and it was actually pretty fun, however, I didn't feel comfortable and confident enough to
 use it for this project.
-- 

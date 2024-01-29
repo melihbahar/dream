@@ -4,14 +4,10 @@
 name: Train models and Push new Docker image
 
 on: push
-#  push:
-#    branches:
-#      - main
-#      - master
-#  pull_request:
-#    branches:
-#      - main
-#      - master
+#  workflow_run:
+#    workflows: [ "Run Tests" ]
+#    types:
+#      - completed
 
 env:
   DOCKERHUB_REPO_NAME: 'dream'
