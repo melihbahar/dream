@@ -1,39 +1,45 @@
-name: Deploy Infrastructure
-
-on: push
-
-env:
- TF_LOG: INFO
- AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
- AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-jobs:
-  terraform:
-    name: Deploy EC2 Instance
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-        working-directory: ./.infrastructure
-
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-
-      - name: Terraform Setup
-        uses: hashicorp/setup-terraform@v2
-
-      - name: Terraform Init
-        run: terraform init
-
-      - name: Terraform validate
-        id: validate
-        run: terraform validate
-
-      - name: Terraform plan
-        id: plan
-        if: github.event_name == 'pull_request'
-        run: terraform plan -no-color -input=false
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve -input=false
+#name: Deploy Infrastructure
+#
+#on:
+#  workflow_run:
+#    workflows: ["Deploy to Amazon ECR"]
+#    types:
+#      - completed
+#
+#env:
+# TF_LOG: INFO
+# AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+# AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#
+#jobs:
+#  terraform:
+#    name: Deploy EC2 Instance
+#    runs-on: ubuntu-latest
+#    defaults:
+#      run:
+#        shell: bash
+#        working-directory: ./.infrastructure
+#
+#    steps:
+#      - name: Checkout Repo
+#        uses: actions/checkout@v4
+#
+#      - name: Terraform Setup
+#        uses: hashicorp/setup-terraform@v2
+#        with:
+#          terraform_version: 1.5.7
+#
+#      - name: Terraform Init
+#        run: terraform init
+#
+#      - name: Terraform validate
+#        id: validate
+#        run: terraform validate
+#
+#      - name: Terraform plan
+#        id: plan
+#        if: github.event_name == 'pull_request'
+#        run: terraform plan -no-color -input=false
+#
+#      - name: Terraform Apply
+#        run: terraform apply -auto-approve -input=false

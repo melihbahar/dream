@@ -3,15 +3,15 @@
 
 name: Train models and Push new Docker image
 
-on:
-  push:
-    branches:
-      - main
-      - master
-  pull_request:
-    branches:
-      - main
-      - master
+on: push
+#  push:
+#    branches:
+#      - main
+#      - master
+#  pull_request:
+#    branches:
+#      - main
+#      - master
 
 env:
   DOCKERHUB_REPO_NAME: 'dream'

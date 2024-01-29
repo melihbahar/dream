@@ -49,7 +49,8 @@ There a few different workflows:
 2) Deploy to ECR - On each change to the main branch, the app is built and pushed to ECR with a new tag.
 3) Deploy to Docker Hub - On each change to the main branch, the app is built and pushed to Docker Hub. 
 This is actually not needed but I used to play around with the image etc. and testing.
-4) Deploy EC2 machines - I used Terraform to deploy EC2 machines on AWS.
+4) Deploy EC2 machines on ECS - I used Terraform to deploy EC2 machines on AWS.
+   (The Terraform code of the ECR repo creation is not included in this repo as I already ran it and not required for the CI/CD)
 
 ## Next Steps
 I will separate it into 2 parts:
@@ -58,6 +59,7 @@ I will separate it into 2 parts:
 
 ### If I had more time
 - Add more unittests for the ML module.
+- Multiple environments for production and staging etc. with different workflows and configurations.
 - Separate to 2 repos:
   - It would be better to have one repo for serving and deploying the app and another repo for actual ML work.
   - This way, we could separate the ML research, different use cases and improvements for the models and/or parts of
@@ -71,13 +73,18 @@ data scientists can focus on the models and research on how to optimize the mode
 MLOps engineers can focus on serving and deployment without having to worry about the accuracy of the models or other possible
 bugs in the ML code.
 
+- Data Validation
+  - The data used for the training is not checked for validity now and it can cause unexpected problems both with the app
+  and the accuracy of the models. In order to prevent it, we could add a data validation stage (such as Great Expectations) before even starting the model
+  training process.
 - Model Registry
   - In the current solution we don't really have a way to keep track of the models that were trained and deployed.
   - We could save each model to a registry and then the serving part would be able to pull the chosen model from the registry.
   - Writing to the registry could be done using a CI/CD pipeline including some necessary checks to make sure the models are as expected.
 - Experiment Management
-  - Instead of just defining one criteria and choosing the best model, we could keep track of different metrics in differnt 
+  - Instead of just defining one criteria and choosing the best model, we could keep track of different metrics in different 
   parts of the model training pipeline.
+  - This would also allow versioning for training data.
   - In a more complex model training pipeline, we probably would have HPS tuning, different models, different scoring functions etc.
 - Periodic/Conditional Retraining
   - Instead of a push to this repo with new data and manually triggering the training and deployment, we could either have a
@@ -88,3 +95,12 @@ bugs in the ML code.
   - This would also enable modularity and parallelization.
   - A workflow orchestrator could be used to manage the pipeline.
   - This way we could also track different versions of different parts.
+
+## How to run
+
+## Notes
+- Ansible could also be used to deploy the app to the EC2 machines. 
+I started working on it but didn't have enough time to finish it as I'm not very familiar with Ansible.
+I took a few hours to learn it and it was actually pretty fun, however, I didn't feel comfortable and confident enough to
+use it for this project.
+- 
