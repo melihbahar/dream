@@ -35,7 +35,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKER_USERNAME }}/{{ env.DOCKERHUB_REPO_NAME }}
+          images: ${{ secrets.DOCKER_USERNAME }}/dream
 
       - name: Train models and Push new Docker image
         uses: docker/build-push-action@v5
