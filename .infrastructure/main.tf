@@ -7,34 +7,6 @@ terraform {
   }
 }
 
-
-#resource "null_resource" "null" {
-#  provisioner "local-exec" {
-#    command = "ssh to IP using key-pair that was created.. docker login docker pull
-#    "
-#  }
-#}
-
-
-
-# ECR Repo created manually
-
-#resource "aws_ecs_cluster" "ecs_cluster" {
-#  name = "dream-cluster"
-#}
-#
-#resource "aws_ecs_task_definition" "task_definition" {
-#  family                = "ecs_cluster"
-#  container_definitions = data.template_file.task_definition_template.rendered
-#}
-#
-#resource "aws_ecs_service" "worker" {
-#  name            = "worker"
-#  cluster         = aws_ecs_cluster.ecs_cluster.id
-#  task_definition = aws_ecs_task_definition.task_definition.arn
-#  desired_count   = 2
-#}
-
 # ec2
 resource "aws_instance" "dream" {
   ami           = var.ami
@@ -48,6 +20,3 @@ resource "aws_instance" "dream" {
     Name = var.instance_name
   }
 }
-
-
-

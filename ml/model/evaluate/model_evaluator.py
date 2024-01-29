@@ -8,6 +8,10 @@ from ml.model.evaluate.score import ScoreExtender
 
 
 class ScoreCriteria(Enum):
+    """
+    Enum for Scoring Criteria.
+    Important to give predefined options for criteria to prevent logic or analytical bugs.
+    """
     MIN = 'min'
     MAX = 'max'
 

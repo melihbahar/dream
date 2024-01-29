@@ -75,14 +75,15 @@ There a few different workflows:
 2) Deploy to ECR - On each change to the main branch, the app is built and pushed to ECR with a new tag. (after making sure the unittests are passing)
 3) Deploy to Docker Hub - On each change to the main branch, the app is built and pushed to Docker Hub. 
 This is actually not needed but I used to play around with the image etc. and testing.
-4) Deploy EC2 machines on ECS - I used Terraform to deploy EC2 machines on AWS. (after pushing the image to ECR)
+4) Deploy EC2 machines on Amazon - I used Terraform to deploy EC2 machines on AWS. (after pushing the image to ECR)
    (The Terraform code of the ECR repo creation is not included in this repo as I already ran it and not required for the CI/CD)
-5) Deploy the app to ECS - I used Terraform to deploy the app to EC2 machine.
+5) Deploy the app to EC2 - I used Terraform to deploy the app to EC2 machine.
 NOTE: This is not best practice! I just did it so that I could get the app working on an EC2 machine and test it.
-In a real world scenario, I would use ECS (Fargate or EC2) or EKS to deploy the app in a more structured and scalable way.
-Obviously, I would also use a load balancer and/or auto-scaling etc. to make it more production grade.
+In a real world scenario, I would use ECS (Fargate or EC2) or more probably EKS (with K8s) to deploy the app in a more structured and scalable way.
+Obviously, I would also use a load balancer and/or auto-scaling (if required) etc. to make it more production grade.
 
 ## Proof!
+
 ![Image](images/img_4.png)
 
 Notice that the EC2 machine is running with the instance_id "i-0f2b6b2b2b2b2b2b2" and outputting us the public IP address.
@@ -95,12 +96,14 @@ I will separate it into 2 parts:
 
 ### If I had more time
 - Add more unittests for the ML module.
-- Multiple environments for production and staging etc. with different workflows and configurations.
+- Multiple environments for production and staging etc. with different workflows and configurations. 
+This way I could separate my testing environment from the actual production environment.
 - Separate to 2 repos:
-  - It would be better to have one repo for serving and deploying the app and another repo for actual ML work.
+  - One repo for serving and deploying the app & another repo for actual ML work.
   - This way, we could separate the ML research, different use cases and improvements for the models and/or parts of
-  the pipeline from the actual serving and deployment. The serving and deployment should be agnostic to the model being used.
-  - In the given structure, a small bug with the data used or other other ML/logic related bugs would be caught only when deployed
+  the pipeline from the actual serving and deployment. 
+  The serving and deployment should be agnostic to the model being used.
+  - In the given structure, a small bug with the data used or other ML/logic related bugs would be caught only when deployed
     (even though there are unittests for the ML module).
 
 ### More complete solution
