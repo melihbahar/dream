@@ -1,11 +1,11 @@
 name: Deploy to Amazon ECR
 
-on: push
-#  workflow_run:
-#    workflows:
-#        - "Run Tests"
-#    types:
-#      - completed
+on:
+  workflow_run:
+    workflows:
+        - "Run Tests"
+    types:
+      - completed
 
 env:
   AWS_REGION: 'us-east-1'
@@ -37,7 +37,7 @@ jobs:
 
       - name: Set env IMAGE_TAG
         run: |
-          if [[ $BRANCH == 'flask-part' && $GITHUB_EVENT_NAME == 'push' ]]; then
+          if [[ $BRANCH == 'main' && $GITHUB_EVENT_NAME == 'push' ]]; then
               echo "IMAGE_TAG=latest" >> "$GITHUB_ENV"
           else
               echo "IMAGE_TAG=${{ github.sha }}" >> "$GITHUB_ENV"
