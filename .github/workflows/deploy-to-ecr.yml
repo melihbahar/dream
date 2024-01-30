@@ -37,7 +37,7 @@ jobs:
 
       - name: Set env IMAGE_TAG
         run: |
-          if [[ $BRANCH == 'main' && $GITHUB_EVENT_NAME == 'push' ]]; then
+          if [[ $BRANCH == 'flask-part' && $GITHUB_EVENT_NAME == 'push' ]]; then
               echo "IMAGE_TAG=latest" >> "$GITHUB_ENV"
           else
               echo "IMAGE_TAG=${{ github.sha }}" >> "$GITHUB_ENV"
