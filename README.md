@@ -83,6 +83,7 @@ There a few different workflows:
    - This is actually not needed but I used to play around with the image etc. and testing.
 4) Deploy EC2 machines on Amazon - Terraform code to deploy EC2 machines on AWS. 
    - Runs after pushing the image to ECR.
+   - Runs each time there is anew tag on the image.
    - (The code of the ECR repo creation is not included in this repo as I already ran it and not required for the CI/CD)
 5) Deploy the app to EC2 - Terraform code to deploy the app to EC2 machine. 
    - This step uses the "latest" tag of the image.
