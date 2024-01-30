@@ -14,7 +14,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.pipeline import Pipeline
 
-from ml.model.evaluate.model_evaluator import ModelEvaluator
+from ml.model.evaluate.model_evaluator import ModelEvaluator, ScoreType
 from ml.model.evaluate.score import RMSE, MAE
 from ml.model.preprocess.train_test_splitter import TrainTestSplitter
 from ml.model.evaluate.model_evaluator import ScoreCriteria
@@ -66,7 +66,7 @@ def train():
     # TODO: make this function accept Score object instead of string
     best_model_name: str = evaluator.choose_best_model(scores,
                                                        ScoreCriteria.MIN,
-                                                       'RMSE')
+                                                       ScoreType.RMSE)
 
     logger.info(f'[Training] - Best model is {best_model_name}')
 

@@ -1,12 +1,14 @@
 #! /bin/bash
 set -e
 
+# For Amazon Linux distributions
 sudo yum install -y yum-utils
 
 sudo yum install docker -y
 sudo yum install awscli -y
 
 sudo service docker start
+# grant read, write, and execute permissions to docker.sock
 sudo chmod 777 /var/run/docker.sock
 
 # login to ecr

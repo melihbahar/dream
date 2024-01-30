@@ -1,10 +1,10 @@
 name: Deploy to Amazon ECR
 
-on: push
-#  workflow_run:
-#    workflows: ["Run Tests"]
-#    types:
-#      - completed
+on:
+  workflow_run:
+    workflows: ["Run Tests"]
+    types:
+      - completed
 
 env:
   AWS_REGION: 'us-east-1'

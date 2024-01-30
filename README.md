@@ -80,7 +80,12 @@ This is actually not needed but I used to play around with the image etc. and te
 5) Deploy the app to EC2 - I used Terraform to deploy the app to EC2 machine.
 NOTE: This is not best practice! I just did it so that I could get the app working on an EC2 machine and test it.
 In a real world scenario, I would use ECS (Fargate or EC2) or more probably EKS (with K8s) to deploy the app in a more structured and scalable way.
-Obviously, I would also use a load balancer and/or auto-scaling (if required) etc. to make it more production grade.
+This is also a better idea as I'm already in the AWS ecosystem and it would be easier to manage.
+Obviously, I would also use a load balancer and/or auto-scaling (assuming a cluster of EC2 machines would be needed with more resources for a real world scenario ) 
+etc. to make it more scalable and robust for production.
+
+NOTE: There are security risks in that the EC2 machine is open to the world and the app is running as root. 
+It could be mitigated by stricter security groups.
 
 ## Proof!
 
@@ -133,10 +138,39 @@ bugs in the ML code.
   - This would allow us to improve different parts of the pipeline without having to change everything else.
   - This would also enable modularity and parallelization.
   - A workflow orchestrator could be used to manage the pipeline.
-  - This way we could also track different versions of different parts.
 
 ## Notes
 - Ansible could also be used to deploy the app to the EC2 machines. 
 I started working on it but didn't have enough time to finish it as I'm not very familiar with Ansible.
-I took a few hours to learn it and it was actually pretty fun, however, I didn't feel comfortable and confident enough to
+I took a few hours to learn it and was actually pretty fun, however, I didn't feel comfortable and confident enough to
 use it for this project.
+
+### Methodology
+- Terraform would output the public IP address of the EC2 machine.
+  - The output can already be configured as the `hosts.cfg` file Ansible needs.
+  - This file would be created after terraform creates the EC2 instances ready to use.
+
+```terraform
+data "template_file" "hosts_cfg" {
+    template = file("./hosts.tpl")
+    vars = {
+        instance_name = join(" ansible_user=<user> \
+                                 ansible_ssh_private_key_file=<ssh_key_path> \
+                                 ansible_ssh_common_args='-o \
+                                 StrictHostKeyChecking=no'\n ", 
+                                 concat(aws_instance.servers.*.public_ip, [""]))
+    }
+}
+ 
+resource "local_file" "hosts_cfg" {
+    content  = data.template_file.hosts.rendered
+    filename = "Ansible/hosts.cfg"
+}
+```
+
+- Ansible would then use this file and a playbook to run the app on the EC2 machine.
+  - The playbook would be something like this:
+
+## Final Notes
+- I had a lot of fun working on this project and learned a lot of new things!
+- I'm looking forward to hearing your feedback and comments!

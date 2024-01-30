@@ -93,6 +93,10 @@ class Preprocessor:
     Attributes:
         data (pd.DataFrame): The dataset to preprpcess
         class_column (str): The name of the class column to be taken into account when preprocessing.
+
+    Methods:
+        get_preprocess_pipeline(): Creates the preprocessing pipeline including the separate pipelines
+        for all different types of features.
     """
     def __init__(self, data: pd.DataFrame, class_column: str = None):
         self.data: pd.DataFrame = data
@@ -114,14 +118,22 @@ class Preprocessor:
         return self._get_numerical_features()
 
     def _get_categorical_features(self) -> List[str]:
+        """ Gets the categorical features from the dataset. """
         cat_features_df: pd.DataFrame = self.data.select_dtypes(include=['object'])
         return cat_features_df.columns.tolist()
 
     def _get_numerical_features(self) -> List[str]:
+        """ Gets the numerical features from the dataset. """
         num_features_df: pd.DataFrame = self.data.select_dtypes(include=['int64', 'float64'])
         return num_features_df.columns.tolist()
 
     def get_preprocess_pipeline(self) -> Pipeline:
+        """
+        Creates the preprocessing pipeline including the separate pipelines for all different types of features.
+
+        Returns:
+             Pipeline: The preprocess pipeline for all types of features
+        """
         cat_features: List[str] = self.cat_features
         num_features: List[str] = self.num_features
 
@@ -139,6 +151,17 @@ class Preprocessor:
         return preprocess_pipeline
 
     def save_pipeline(self, pipeline: Pipeline, path: str) -> None:
+        """
+        Saves the pipeline to the given path.
+
+        Args:
+            pipeline (Pipeline): The pipeline to save
+            path (str): The path to save the pipeline to
+
+        Returns:
+            None
+        """
+
         try:
             pickle.dump(pipeline, open(path, 'wb'))
             self.log(f"Successfully saved pipeline to {path}")

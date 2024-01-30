@@ -16,6 +16,13 @@ class ScoreCriteria(Enum):
     MAX = 'max'
 
 
+class ScoreType(Enum):
+    # Add here any new score type
+    RMSE = 'RMSE'
+    MAE = 'MAE'
+    CUSTOM_SCORE = 'CUSTOM_SCORE'
+
+
 class ModelEvaluator:
     """
     Class for evaluating machine learning models.
@@ -23,7 +30,7 @@ class ModelEvaluator:
     Methods:
         evaluate(model: GenericModel, X_valid, Y_valid, score_func: Type[ScoreExtender]):
             Evaluate the model using the specified scoring function.
-        choose_best_model(scores: Dict[str, Any], criteria: ScoreCriteria, score_type: str):
+        choose_best_model(scores: Dict[str, Any], criteria: ScoreCriteria, score_type: ScoreType):
             Choose the best model based on a specific scoring criterion.
         save_model(model, path: str):  Save the model to a file.
     """
@@ -50,20 +57,20 @@ class ModelEvaluator:
         return score_func(Y_valid, y_pred)()
 
     @staticmethod
-    def choose_best_model(scores: Dict[str, Any], criteria: ScoreCriteria, score_type: str) -> Union[str, None]:
+    def choose_best_model(scores: Dict[str, Any], criteria: ScoreCriteria, score_type: ScoreType) -> Union[str, None]:
         """
         Choose the best model based on a specific scoring criterion.
 
         Args:
             scores (Dict[str, Any]): Dictionary containing model names as keys and their scores as values.
             criteria (ScoreCriteria): The scoring criteria to use for selection.
-            score_type (str): The type of score to consider. Needs to be one of the keys of each model in the scores dictionary.
+            score_type (ScoreType): The type of score to consider. Needs to be one of the keys of each model in the scores dictionary.
 
         Returns:
             Union[str, None]: The name of the best model.
         """
 
-        specific_scores: Dict[str, float] = {key: value.get(score_type) for key, value in scores.items()}
+        specific_scores: Dict[str, float] = {key: value.get(score_type.value) for key, value in scores.items()}
         if criteria is ScoreCriteria.MIN:
             return min(specific_scores, key=specific_scores.get)
         elif criteria is ScoreCriteria.MAX:

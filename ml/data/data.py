@@ -37,6 +37,7 @@ class Data:
             absolute_path: str = f'{os.getcwd()}/data/{self.path}'
             df: pd.DataFrame = pd.read_csv(absolute_path)
             self.log(f"Found {self.path} locally.")
+
         except Exception as e:
             self.log(f"Couldn't find {self.path}, using URL instead.")
             url = 'https://drive.google.com/file/d/1kqnB4J8FuF1k8xLIvfbPE1jsqUwd3wVH/view?usp=sharing'
