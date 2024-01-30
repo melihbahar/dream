@@ -17,6 +17,6 @@ resource "aws_instance" "dream" {
   user_data = file("user_data.sh")
 
   tags = {
-    Name = var.instance_name
+    Name = var.image_tag
   }
 }

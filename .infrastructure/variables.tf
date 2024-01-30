@@ -24,5 +24,6 @@ variable "ecr_image_repo_url" {
 }
 
 variable "image_tag" {
-  default = "latest"
+  description = "The tag name for the EC2 instance"
+  type        = string
 }
