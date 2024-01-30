@@ -1,11 +1,11 @@
 name: Deploy to Amazon ECR
 
-on:
-  workflow_run:
-    workflows:
-        - "Run Tests"
-    types:
-      - completed
+on: push
+#  workflow_run:
+#    workflows:
+#        - "Run Tests"
+#    types:
+#      - completed
 
 env:
   AWS_REGION: 'us-east-1'
@@ -32,11 +32,22 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Set env BRANCH
+        run: echo "BRANCH=$(echo $GITHUB_REF | cut -d'/' -f 3)" >> $GITHUB_ENV
+
+      - name: Set env IMAGE_TAG
+        run: |
+          if [[ $BRANCH == 'main' && $GITHUB_EVENT_NAME == 'push' ]]; then
+              echo "IMAGE_TAG=latest" >> "$IMAGE_TAG"
+          else
+              echo "IMAGE_TAG=${{ github.sha }}" >> "$IMAGE_TAG"
+          fi
+
       - name: Build Tag & Push to ECR
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
+          IMAGE_TAG: env.IMAGE_TAG
         run: |
           docker build -f Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
