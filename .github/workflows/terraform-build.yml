@@ -2,7 +2,8 @@ name: Deploy Infrastructure
 
 on:
   workflow_run:
-    workflows: ["Deploy to Amazon ECR"]
+    workflows:
+      - "Deploy to Amazon ECR"
     types:
       - completed
 

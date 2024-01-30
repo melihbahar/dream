@@ -33,9 +33,11 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Set env BRANCH
+        id: set-env-branch
         run: echo "BRANCH=$(echo $GITHUB_REF | cut -d'/' -f 3)" >> $GITHUB_ENV
 
       - name: Set env IMAGE_TAG
+        id: set-env-image-tag
         run: |
           if [[ $BRANCH == 'main' && $GITHUB_EVENT_NAME == 'push' ]]; then
               echo "IMAGE_TAG=latest" >> "$GITHUB_ENV"
