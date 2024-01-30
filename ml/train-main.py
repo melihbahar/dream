@@ -21,29 +21,33 @@ from ml.model.evaluate.model_evaluator import ScoreCriteria
 
 
 def train():
-    # script_dir = os.path.dirname(__file__)
-    # target_dir = os.path.abspath(os.path.join(script_dir, '..', 'app', 'api', 'model'))
+    class_column: str = 'SalePrice'
+    test_size: float = 0.2
 
-    class_column = 'SalePrice'
+    # Load the data
+    data: Data = Data(class_column)
+    dataset: pd.DataFrame = data.dataset
+    class_col_df: pd.DataFrame = dataset[class_column]
 
-    data = Data(class_column)
-    dataset = data.dataset
-    class_col_df = dataset[class_column]
-
-    # data.save_feature_columns(f'feature_columns.pickle')
-
-    set_preprocessor: Preprocessor = Preprocessor(data=dataset, class_column=class_column)
+    # Preprocessing
+    set_preprocessor: Preprocessor = Preprocessor(data=dataset,
+                                                  class_column=class_column)
     preprocess_pipeline: Pipeline = set_preprocessor.get_preprocess_pipeline()
     fit_preprocess_pipeline = preprocess_pipeline.fit(dataset.drop([class_column], axis=1))
 
+    # Save the pipeline - we will need it for prediction later
+    # That's why we only save the "fit" pipeline before the "transform" step
     set_preprocessor.save_pipeline(fit_preprocess_pipeline,
                                    f'preprocess_pipeline.pickle')
 
+    # Transform the dataset
     processed_df = fit_preprocess_pipeline.transform(dataset)
     processed_df = pd.concat([processed_df, class_col_df], axis=1)
 
-    splitter = TrainTestSplitter(df=processed_df, class_column='SalePrice')
-    X_train, X_valid, Y_train, Y_valid, X_test = splitter.split(test_size=0.2)
+    # Split the dataset
+    splitter = TrainTestSplitter(df=processed_df,
+                                 class_column=class_column)
+    X_train, X_valid, Y_train, Y_valid, X_test = splitter.split(test_size=test_size)
 
     models = {
         'SVR': GenericModel(svm.SVR()),
@@ -63,14 +67,13 @@ def train():
         model_scores['RMSE'] = evaluator.evaluate(model, X_valid, Y_valid, RMSE)
         model_scores['MAE'] = evaluator.evaluate(model, X_valid, Y_valid, MAE)
 
-    # TODO: make this function accept Score object instead of string
     best_model_name: str = evaluator.choose_best_model(scores,
                                                        ScoreCriteria.MIN,
                                                        ScoreType.RMSE)
 
     logger.info(f'[Training] - Best model is {best_model_name}')
 
-    best_model = models.get(best_model_name)
+    best_model: GenericModel = models.get(best_model_name)
     evaluator.save_model(best_model,
                          f'final_model.pickle')
 

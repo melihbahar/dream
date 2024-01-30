@@ -5,7 +5,8 @@ name: Train models and Push new Docker image
 
 on:
   workflow_run:
-    workflows: [ "Run Tests" ]
+    workflows:
+      - "Run Tests"
     types:
       - completed
 

@@ -1,14 +1,12 @@
 name: Run Tests
 
-on: push
-#  push:
-#    branches:
-#      - main
-#      - master
-#  pull_request:
-#    branches:
-#      - main
-#      - master
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   unittests:

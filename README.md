@@ -70,6 +70,7 @@ curl -d '[{"MSSubClass": 60,
 
 ## CI/CD
 The CI/CD is done using Github Actions.
+
 There a few different workflows:
 1) Unit tests - Runs the unittests for the ML module on each push to the repo.
 2) Deploy to ECR - On each change to the main branch, the app is built and pushed to ECR with a new tag. (after making sure the unittests are passing)
@@ -84,8 +85,15 @@ This is also a better idea as I'm already in the AWS ecosystem and it would be e
 Obviously, I would also use a load balancer and/or auto-scaling (assuming a cluster of EC2 machines would be needed with more resources for a real world scenario ) 
 etc. to make it more scalable and robust for production.
 
+NOTE:  `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` are added as secrets in the repo settings.
+
 NOTE: There are security risks in that the EC2 machine is open to the world and the app is running as root. 
 It could be mitigated by stricter security groups.
+
+NOTE: Don't forget to terminate the cluster once you're done with it!
+```shell
+terraform destroy
+```
 
 ## Proof!
 
@@ -95,14 +103,14 @@ Notice that the EC2 machine is running with the instance_id "i-0f2b6b2b2b2b2b2b2
 This way we can do another POST request to the app's predict endpoint and get the prediction!
 
 ## Next Steps
-I will separate it into 2 parts:
+Let's separate it into 2 parts:
 1) If I had more time
 2) Longer term/more complete end-to-end solution
 
 ### If I had more time
 - Add more unittests for the ML module.
-- Use pydantic for basic data validation for the types and basic validations of the data.
-- Multiple environments for production and staging etc. with different workflows and configurations. 
+- Use pydantic for basic data validation for the types and basic validations of the data such as Year Remodeled is after Year Built etc.
+- Multiple environments for production and staging with different workflows and configurations. For example no need to create an instance each time.
 This way I could separate my testing environment from the actual production environment.
 - Separate to 2 repos:
   - One repo for serving and deploying the app & another repo for actual ML work.
@@ -170,7 +178,10 @@ resource "local_file" "hosts_cfg" {
 ```
 
 - Ansible would then use this file and a playbook to run the app on the EC2 machine.
-  - The playbook would be something like this:
+  - The playbook would be a yaml file that defines the necessary steps:
+    - Install necessary packages such as docker and aws_cli
+    - Connect to ECR and pull the image to EC2 
+    - Run the app
 
 ## Final Notes
 - I had a lot of fun working on this project and learned a lot of new things!
