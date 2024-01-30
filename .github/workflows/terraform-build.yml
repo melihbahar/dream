@@ -42,7 +42,7 @@ jobs:
 
       - name: Terraform plan
         id: plan
-        run: terraform plan -no-color -input=false -var="tag_name=${GITHUB_REF/refs\/tags\//}"
+        run: terraform plan -no-color -input=false -out=tfplan -var="tag_name=${GITHUB_REF/refs\/tags\//}"
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve -input=false
+        run: terraform apply -auto-approve tfplan
