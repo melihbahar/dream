@@ -1,36 +1,33 @@
-# Stage 1: Train the model
+# Stage 1: Train
 FROM python:3.9-slim AS train
 WORKDIR /app
 
 Copy ./requirements.txt ./
-
-# Copy ml directory
 COPY ml /app/ml
-
-# Copy train script and requirements
 COPY ml/train-main.py /app/train-main.py
 
-# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Run the training script
+# Run model training script
 RUN python train-main.py
 
-# Stage 2: Package serving
+# Stage 2: Serving
 FROM python:3.9-slim AS pack-serving
-
-# Copy trained model from the train stage
 WORKDIR /app
-COPY --from=train /app/ml/artifacts /app/api/model/
 
-# Copy Flask app
+# Copy model and preprocess pipeline from the train stage
+COPY --from=train /app/final_model.pickle /app/model/final_model.pickle
+COPY --from=train /app/preprocess_pipeline.pickle /app/model/preprocess_pipeline.pickle
+
+COPY ./requirements.txt /app
+COPY ./ml /app/ml
 COPY app/api/app.py app/api/app.py
 
-# Install Flask and other dependencies
-RUN pip install flask
+# RUN pip install flask
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose port
-EXPOSE 5000
+# Expose port to listen on
+# EXPOSE 5000
 
-# Command to run the Flask app
-CMD ["python", "app.py"]
+# Run the flask app
+CMD ["python", "app/api/app.py"]
