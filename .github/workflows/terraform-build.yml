@@ -6,6 +6,9 @@ on:
       - "Deploy to Amazon ECR"
     types:
       - completed
+  push:
+    tags:
+      - '*'
 
 env:
  TF_LOG: INFO
@@ -39,9 +42,7 @@ jobs:
 
       - name: Terraform plan
         id: plan
-        if: github.event_name == 'pull_request'
-        run: terraform plan -no-color -input=false
+        run: terraform plan -no-color -input=false -var="tag_name=${GITHUB_REF/refs\/tags\//}"
 
       - name: Terraform Apply
-        if: github.event.pull_request.merged == true
         run: terraform apply -auto-approve -input=false
