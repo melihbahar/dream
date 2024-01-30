@@ -73,24 +73,33 @@ The CI/CD is done using Github Actions.
 
 There a few different workflows:
 1) Unit tests - Runs the unittests for the ML module on each push to the repo.
-2) Deploy to ECR - On each change to the main branch, the app is built and pushed to ECR with a new tag. (after making sure the unittests are passing)
-3) Deploy to Docker Hub - On each change to the main branch, the app is built and pushed to Docker Hub. 
-This is actually not needed but I used to play around with the image etc. and testing.
-4) Deploy EC2 machines on Amazon - I used Terraform to deploy EC2 machines on AWS. (after pushing the image to ECR)
-   (The Terraform code of the ECR repo creation is not included in this repo as I already ran it and not required for the CI/CD)
-5) Deploy the app to EC2 - I used Terraform to deploy the app to EC2 machine.
-NOTE: This is not best practice! I just did it so that I could get the app working on an EC2 machine and test it.
-In a real world scenario, I would use ECS (Fargate or EC2) or more probably EKS (with K8s) to deploy the app in a more structured and scalable way.
-This is also a better idea as I'm already in the AWS ecosystem and it would be easier to manage.
-Obviously, I would also use a load balancer and/or auto-scaling (assuming a cluster of EC2 machines would be needed with more resources for a real world scenario ) 
-etc. to make it more scalable and robust for production.
+   - Runs on each push to the repo.
+2) Deploy to ECR - The app is built and pushed to ECR with a new tag
+   - Runs on each change to the main branch (after making sure the unittests are passing)
+   - If the push is to the main branch, then the image is tagged as "latest"
+   - If a different branch, then as the GitHub SHA of the commit.
+3) Deploy to Docker Hub - The app is built and pushed to Docker Hub. 
+   - Runs on each change to the main branch (after making sure the unittests are passing)
+   - This is actually not needed but I used to play around with the image etc. and testing.
+4) Deploy EC2 machines on Amazon - Terraform code to deploy EC2 machines on AWS. 
+   - Runs after pushing the image to ECR.
+   - (The code of the ECR repo creation is not included in this repo as I already ran it and not required for the CI/CD)
+5) Deploy the app to EC2 - Terraform code to deploy the app to EC2 machine. 
+   - This step uses the "latest" tag of the image.
+   - The actual deployment of the infrastructure (`terraform apply`) will only happen once the PR is merged.
+   
+   **NOTE:** This is not best practice! I just did it so that I could get the app working on an EC2 machine and test it.
+   In a real world scenario, I would use ECS (Fargate or EC2) or more probably EKS (with K8s) to deploy the app in a more structured and scalable way.
+   This is also a better idea as I'm already in the AWS ecosystem and it would be easier to manage.
+   Obviously, I would also use a load balancer and/or auto-scaling (assuming a cluster of EC2 machines would be needed with more resources for a real world scenario ) 
+   etc. to make it more scalable and robust for production.
 
-NOTE:  `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` are added as secrets in the repo settings.
+**NOTE:**  `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` are added as secrets in the repo settings.
 
-NOTE: There are security risks in that the EC2 machine is open to the world and the app is running as root. 
+**NOTE:** There are security risks in that the EC2 machine is open to the world and the app is running as root. 
 It could be mitigated by stricter security groups.
 
-NOTE: Don't forget to terminate the cluster once you're done with it!
+**NOTE:** Don't forget to terminate the cluster once you're done with it!
 ```shell
 terraform destroy
 ```
