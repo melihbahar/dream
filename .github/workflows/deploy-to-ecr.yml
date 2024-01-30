@@ -1,17 +1,17 @@
 name: Deploy to Amazon ECR
 
-on:
-  workflow_run:
-    workflows:
-        - "Run Tests"
-    types:
-      - completed
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: push
+#  workflow_run:
+#    workflows:
+#        - "Run Tests"
+#    types:
+#      - completed
+#  push:
+#    branches:
+#      - main
+#  pull_request:
+#    branches:
+#      - main
 
 env:
   AWS_REGION: 'us-east-1'
@@ -27,7 +27,12 @@ jobs:
       - name: Set Image Tag
         id: set-tag
         run: |
-          echo ::set-output name=image-tag::${{ github.event_name == 'pull_request' ? 'latest': github.sha }}
+          run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then 
+            echo "::set-output name=image-tag::latest"; 
+          else echo "::set-output name=image-tag::${{ github.sha }}"; 
+          fi
+
 
   build-and-deploy:
     name: Deploy
