@@ -28,7 +28,7 @@ jobs:
         id: set-tag
         run: |
           run: |
-          if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/main" ];; then 
+          if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/main" ]; then 
             echo "::set-output name=image-tag::latest"; 
           else echo "::set-output name=image-tag::${{ github.sha }}"; 
           fi
