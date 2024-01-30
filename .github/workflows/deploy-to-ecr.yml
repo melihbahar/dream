@@ -1,17 +1,17 @@
 name: Deploy to Amazon ECR
 
-on: push
-#  workflow_run:
-#    workflows:
-#        - "Run Tests"
-#    types:
-#      - completed
-#  push:
-#    branches:
-#      - main
-#  pull_request:
-#    branches:
-#      - main
+on:
+  workflow_run:
+    workflows:
+        - "Run Tests"
+    types:
+      - completed
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 env:
   AWS_REGION: 'us-east-1'
@@ -28,7 +28,7 @@ jobs:
         id: set-tag
         run: |
           run: |
-          if [ "${{ github.event_name }}" == "pull_request" ]; then 
+          if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/main" ];; then 
             echo "::set-output name=image-tag::latest"; 
           else echo "::set-output name=image-tag::${{ github.sha }}"; 
           fi
@@ -54,19 +54,6 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Set env BRANCH
-        id: set-env-branch
-        run: echo "BRANCH=$(echo $GITHUB_REF | cut -d'/' -f 3)" >> $GITHUB_ENV
-
-#      - name: Set env IMAGE_TAG
-#        id: set-env-image-tag
-#        run: |
-#          if $BRANCH == 'main'; then
-#              echo "IMAGE_TAG=latest" >> "$GITHUB_ENV"
-#          else
-#              echo "IMAGE_TAG=${{ github.sha }}" >> "$GITHUB_ENV"
-#          fi
 
       - name: Build Tag & Push to ECR
         id: build-image
