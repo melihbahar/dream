@@ -2,7 +2,8 @@ name: Deploy to Amazon ECR
 
 on:
   workflow_run:
-    workflows: ["Run Tests"]
+    workflows:
+        - "Run Tests"
     types:
       - completed
 

@@ -101,6 +101,7 @@ I will separate it into 2 parts:
 
 ### If I had more time
 - Add more unittests for the ML module.
+- Use pydantic for basic data validation for the types and basic validations of the data.
 - Multiple environments for production and staging etc. with different workflows and configurations. 
 This way I could separate my testing environment from the actual production environment.
 - Separate to 2 repos:
