@@ -23,7 +23,7 @@ variable "ecr_image_repo_url" {
   default = "905418012002.dkr.ecr.us-east-1.amazonaws.com/dream"
 }
 
-variable "image_tag" {
+variable "tag_name" {
   description = "The tag name for the EC2 instance"
   type        = string
 }
